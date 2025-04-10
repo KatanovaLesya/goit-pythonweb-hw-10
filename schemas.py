@@ -30,3 +30,23 @@ class Contact(ContactBase):
 
     class Config:
         orm_mode = True
+
+# 👤 Базова модель користувача
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+
+# 🆕 Для реєстрації
+class UserCreate(UserBase):
+    password: str
+
+# 📤 Для відповіді
+class UserOut(UserBase):
+    id: int
+    is_active: bool
+    is_verified: bool
+    avatar_url: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
