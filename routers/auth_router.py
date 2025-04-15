@@ -7,9 +7,13 @@ from models import User
 from schemas import UserCreate, UserOut
 from auth_service import get_password_hash, verify_password, create_access_token
 
+from schemas import UserOut
+from auth_service import get_current_user
 
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+
+router = APIRouter(tags=["auth"])
+
 
 # 🧩 Залежність для доступу до БД
 def get_db():
@@ -46,3 +50,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.get("/me", response_model=UserOut)
+def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
