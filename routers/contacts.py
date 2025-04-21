@@ -10,7 +10,6 @@ from auth_service import get_current_user
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
 
-# Залежність для отримання сесії
 def get_db():
     db = SessionLocal()
     try:
@@ -19,7 +18,6 @@ def get_db():
         db.close()
 
 
-# Створити новий контакт
 @router.post("/", response_model=Contact, status_code=status.HTTP_201_CREATED)
 def create_contact(
     contact: ContactCreate,
@@ -29,7 +27,6 @@ def create_contact(
     return repository_contacts.create_contact(db, contact, current_user.id)
 
 
-# Отримати список контактів
 @router.get("/", response_model=List[Contact])
 def read_contacts(
     skip: int = 0,
@@ -40,7 +37,6 @@ def read_contacts(
     return repository_contacts.get_contacts(db, skip, limit, current_user.id)
 
 
-# Отримати контакт по ID
 @router.get("/{contact_id}", response_model=Contact)
 def read_contact(
     contact_id: int,
@@ -53,7 +49,6 @@ def read_contact(
     return contact
 
 
-# Оновити контакт
 @router.put("/{contact_id}", response_model=Contact)
 def update_contact(
     contact_id: int,
@@ -67,7 +62,6 @@ def update_contact(
     return updated_contact
 
 
-# Видалити контакт
 @router.delete("/{contact_id}", response_model=Contact)
 def delete_contact(
     contact_id: int,
@@ -79,8 +73,6 @@ def delete_contact(
         raise HTTPException(status_code=404, detail="Contact not found")
     return deleted
 
-
-# Пошук по імені, прізвищу або email
 @router.get("/search/", response_model=List[Contact])
 def search_contacts(
     query: str,
@@ -89,8 +81,6 @@ def search_contacts(
 ):
     return repository_contacts.search_contacts(db, query, current_user.id)
 
-
-# Найближчі дні народження
 @router.get("/birthdays/", response_model=List[Contact])
 def upcoming_birthdays(
     db: Session = Depends(get_db),

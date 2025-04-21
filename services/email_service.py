@@ -28,4 +28,4 @@ def send_email(to_email: str, subject: str, body: str):
             server.send_message(msg)
             print(f"📧 Email sent to {to_email}")
     except Exception as e:
-        print(f"❌ Failed to send email: {e}")
+        print(f"Failed to send email: {e}")

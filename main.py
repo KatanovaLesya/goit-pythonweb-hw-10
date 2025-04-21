@@ -18,7 +18,7 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
         super().__init__(flows=flows)
 
 app = FastAPI(
-    title="📇 Contacts API",
+    title="Contacts API",
     description="REST API для керування контактами",
     version="1.0.0",
     openapi_tags=[{"name": "auth", "description": "Аутентифікація"}]
@@ -36,7 +36,6 @@ app.add_middleware(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Підключення роутерів
 app.include_router(auth_router, prefix="/auth")
 app.include_router(contacts.router)
 

@@ -22,17 +22,12 @@ from rate_limiter import limiter
 
 router = APIRouter(tags=["auth"])
 
-
-
-
-# 🧩 Залежність для доступу до БД
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-
 
 @router.post("/signup", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
@@ -50,19 +45,15 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     
-    # Створення токена підтвердження
     verification_token = create_verification_token(new_user.email)
 
-    # 🔗 Формування посилання підтвердження (в реальному проекті — з фронтендом)
     verification_link = f"http://localhost:8000/auth/verify-email?token={verification_token}"
 
-    # Надсилання листа
     send_email(
         to_email=new_user.email,
         subject="🎉 Підтвердіть вашу пошту",
         body=f"Привіт, {new_user.username}!\n\nПерейдіть за посиланням для підтвердження вашої електронної адреси:\n{verification_link}"
     )
-
 
     return new_user
 
@@ -73,7 +64,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # 🔒 Перевірка верифікації
+
     if not user.is_verified:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
