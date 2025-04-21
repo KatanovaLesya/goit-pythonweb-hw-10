@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, Date, Boolean
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
-from sqlalchemy import ForeignKey
 
 class Contact(Base):
     __tablename__ = "contacts"
@@ -16,6 +15,7 @@ class Contact(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates="contacts")
+
 
 class User(Base):
     __tablename__ = "users"
