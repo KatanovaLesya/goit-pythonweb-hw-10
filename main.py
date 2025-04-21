@@ -5,6 +5,8 @@ from fastapi.security import OAuth2
 
 from routers import contacts
 from routers.auth_router import router as auth_router
+from routers.contacts import router as contacts_router
+
 
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -37,7 +39,8 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.include_router(auth_router, prefix="/auth")
-app.include_router(contacts.router)
+app.include_router(contacts_router, prefix="/contacts")
+
 
 
 @app.get("/")
