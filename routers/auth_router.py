@@ -18,6 +18,9 @@ from fastapi import Request
 from auth_service import SECRET_KEY, ALGORITHM
 
 from rate_limiter import limiter
+from fastapi import UploadFile, File
+from services.cloudinary_service import upload_avatar
+import os
 
 
 router = APIRouter(tags=["auth"])
@@ -102,3 +105,22 @@ def verify_email(token: str = Query(...), db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Email successfully verified!"}
 
+@router.post("/avatar")
+def upload_avatar_route(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    contents = file.file.read()
+    temp_file = f"temp_{file.filename}"
+
+    with open(temp_file, "wb") as f:
+        f.write(contents)
+
+    avatar_url = upload_avatar(temp_file)
+    os.remove(temp_file)
+
+    current_user.avatar_url = avatar_url
+    db.commit()
+
+    return {"avatar_url": avatar_url}
